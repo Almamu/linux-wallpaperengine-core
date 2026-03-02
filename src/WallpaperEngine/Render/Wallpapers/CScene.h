@@ -3,6 +3,7 @@
 #include "WallpaperEngine/Render/Camera.h"
 
 #include "WallpaperEngine/Render/CWallpaper.h"
+#include "frontends/project.h"
 
 namespace WallpaperEngine::Render {
 class Camera;
@@ -16,7 +17,7 @@ class CScene final : public CWallpaper {
 public:
     CScene (
 	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-	const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
+	wp_mouse_input* mouseInput
     );
 
     ~CScene () override;
@@ -36,8 +37,8 @@ public:
     [[nodiscard]] const CObject* getObject (int id) const;
 
 protected:
-    void renderFrame (const glm::ivec4& viewport) override;
-    void updateMouse (const glm::ivec4& viewport);
+    void renderFrame () override;
+    void updateMouse ();
 
     friend class CWallpaper;
 

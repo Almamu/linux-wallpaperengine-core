@@ -4,10 +4,10 @@
 
 using namespace WallpaperEngine::WebBrowser::CEF;
 
-SubprocessApp::SubprocessApp (WallpaperEngine::Application::WallpaperApplication& application) :
-    m_application (application) {
-    for (const auto& info : this->m_application.getBackgrounds () | std::views::values) {
-	this->m_handlerFactories[info->workshopId] = new WPSchemeHandlerFactory (*info);
+SubprocessApp::SubprocessApp (Context& context) :
+    m_context (context) {
+    for (const auto& info : this->getContext ().projects) {
+        this->m_handlerFactories[info->workshopId] = new WPSchemeHandlerFactory (*info);
     }
 }
 
@@ -21,8 +21,8 @@ void SubprocessApp::OnRegisterCustomSchemes (CefRawPtr<CefSchemeRegistrar> regis
     }
 }
 
-const WallpaperEngine::Application::WallpaperApplication& SubprocessApp::getApplication () const {
-    return this->m_application;
+const WallpaperEngine::Context& SubprocessApp::getContext () const {
+    return this->m_context;
 }
 
 const std::map<std::string, WPSchemeHandlerFactory*>& SubprocessApp::getHandlerFactories () const {

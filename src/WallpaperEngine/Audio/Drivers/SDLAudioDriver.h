@@ -27,8 +27,8 @@ struct SDLAudioBuffer {
 class SDLAudioDriver final : public AudioDriver {
 public:
     SDLAudioDriver (
-	Application::ApplicationContext& applicationContext, Detectors::AudioPlayingDetector& detector,
-	Recorders::PlaybackRecorder& recorder
+	Context& applicationContext, std::unique_ptr<Detectors::AudioPlayingDetector> detector,
+	std::unique_ptr<Recorders::PlaybackRecorder> recorder
     );
     ~SDLAudioDriver () override;
 

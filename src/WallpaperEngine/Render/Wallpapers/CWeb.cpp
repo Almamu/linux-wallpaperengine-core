@@ -2,10 +2,14 @@
 // https://github.com/if1live/cef-gl-example
 // https://github.com/andmcgregor/cefgui
 #include "CWeb.h"
+
+#include "WallpaperEngine/Context.h"
 #include "WallpaperEngine/WebBrowser/CEF/WPSchemeHandlerFactory.h"
 
 #include "WallpaperEngine/Data/Model/Project.h"
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
+#include "WallpaperEngine/Input/MouseClickStatus.h"
+#include "include/cef_app.h"
 
 using namespace WallpaperEngine::Render;
 using namespace WallpaperEngine::Render::Wallpapers;
@@ -15,8 +19,8 @@ using namespace WallpaperEngine::WebBrowser::CEF;
 
 CWeb::CWeb (
     const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext, WebBrowserContext& browserContext,
-    const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
-) : CWallpaper (wallpaper, context, audioContext, scalingMode, clampMode), m_browserContext (browserContext) {
+    wp_mouse_input* mouseInput
+) : CWallpaper (wallpaper, context, audioContext, mouseInput), m_browserContext (browserContext) {
     // setup framebuffers
     this->setupFramebuffers ();
 
@@ -27,7 +31,7 @@ CWeb::CWeb (
 
     CefBrowserSettings browserSettings;
     // documentaion says that 60 fps is maximum value
-    browserSettings.windowless_frame_rate = std::max (60, context.getApp ().getContext ().settings.render.maximumFPS);
+    browserSettings.windowless_frame_rate = std::max (60, context.getContext ().config->web_fps);
 
     this->m_client = new WebBrowser::CEF::BrowserClient (m_renderHandler);
     // use the custom scheme for the wallpaper's files
@@ -56,14 +60,15 @@ void CWeb::setSize (const int width, const int height) {
     this->m_browser->GetHost ()->WasResized ();
 }
 
-void CWeb::renderFrame (const glm::ivec4& viewport) {
+void CWeb::renderFrame () {
+    // TODO: IMPLEMENT BACK THIS CHANGE SOME WAY
     // ensure the viewport matches the window size, and resize if needed
-    if (viewport.z != this->getWidth () || viewport.w != this->getHeight ()) {
-	this->setSize (viewport.z, viewport.w);
-    }
+    //if (viewport.z != this->getWidth () || viewport.w != this->getHeight ()) {
+    //  this->setSize (viewport.z, viewport.w);
+    //}
 
     // ensure the virtual mouse position is up to date
-    this->updateMouse (viewport);
+    this->updateMouse ();
     // use the scene's framebuffer by default
     glBindFramebuffer (GL_FRAMEBUFFER, this->getWallpaperFramebuffer ());
     // ensure we render over the whole framebuffer
@@ -80,39 +85,41 @@ void CWeb::renderFrame (const glm::ivec4& viewport) {
     CefDoMessageLoopWork ();
 }
 
-void CWeb::updateMouse (const glm::ivec4& viewport) {
-    // update virtual mouse position first
-    auto& input = this->getContext ().getInputContext ().getMouseInput ();
-
-    const glm::dvec2 position = input.position ();
-    const auto leftClick = input.leftClick ();
-    const auto rightClick = input.rightClick ();
+void CWeb::updateMouse () {
+    const glm::dvec2 position = this->getLiveMousePosition ();
+    const auto buttonStatus = this->getMouseInputHandler ()->is_pressed (
+        this->getMouseInputHandler ()->user_parameter, WP_MOUSE_INPUT_BUTTON_LEFT | WP_MOUSE_INPUT_BUTTON_RIGHT
+    );
+    const auto leftClick = (buttonStatus & WP_MOUSE_INPUT_BUTTON_LEFT) > 0;
+    const auto rightClick = (buttonStatus & WP_MOUSE_INPUT_BUTTON_RIGHT) > 0;
 
     CefMouseEvent evt;
     // Set mouse current position. Maybe clamps are not needed
-    evt.x = std::clamp (static_cast<int> (position.x - viewport.x), 0, viewport.z);
+    evt.x = position.x;
     // Convert from OpenGL coordinates (Y=0 at bottom) to CEF coordinates (Y=0 at top)
-    evt.y = viewport.w - std::clamp (static_cast<int> (position.y - viewport.y), 0, viewport.w);
+    evt.y = position.y;
     // Send mouse position to cef
     this->m_browser->GetHost ()->SendMouseMoveEvent (evt, false);
 
-    // TODO: ANY OTHER MOUSE EVENTS TO SEND?
-    if (leftClick != this->m_leftClick) {
-	this->m_browser->GetHost ()->SendMouseClickEvent (
-	    evt, CefBrowserHost::MouseButtonType::MBT_LEFT,
-	    leftClick == WallpaperEngine::Input::MouseClickStatus::Released, 1
-	);
+    const auto leftClickStatus = leftClick ? WallpaperEngine::Input::MouseClickStatus::Clicked : WallpaperEngine::Input::MouseClickStatus::Released;
+    const auto rightClickStatus = rightClick ? WallpaperEngine::Input::MouseClickStatus::Clicked : WallpaperEngine::Input::MouseClickStatus::Released;
+
+    if (leftClickStatus != this->m_leftClick) {
+        this->m_browser->GetHost ()->SendMouseClickEvent (
+            evt, CefBrowserHost::MouseButtonType::MBT_LEFT,
+            leftClickStatus == WallpaperEngine::Input::MouseClickStatus::Released, 1
+        );
     }
 
-    if (rightClick != this->m_rightClick) {
-	this->m_browser->GetHost ()->SendMouseClickEvent (
-	    evt, CefBrowserHost::MouseButtonType::MBT_RIGHT,
-	    rightClick == WallpaperEngine::Input::MouseClickStatus::Released, 1
-	);
+    if (rightClickStatus != this->m_rightClick) {
+        this->m_browser->GetHost ()->SendMouseClickEvent (
+            evt, CefBrowserHost::MouseButtonType::MBT_RIGHT,
+            rightClickStatus == WallpaperEngine::Input::MouseClickStatus::Released, 1
+        );
     }
 
-    this->m_leftClick = leftClick;
-    this->m_rightClick = rightClick;
+    this->m_leftClick = leftClickStatus;
+    this->m_rightClick = rightClickStatus;
 }
 
 CWeb::~CWeb () {

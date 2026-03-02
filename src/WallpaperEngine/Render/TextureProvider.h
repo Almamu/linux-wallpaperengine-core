@@ -12,8 +12,8 @@
 namespace WallpaperEngine::Render {
 using namespace WallpaperEngine::Data::Assets;
 /**
- * Base interface that describes the minimum information required for a texture
- * to be displayed by the engine
+ * Base interface that describes the minimum information required for the engine
+ * to display a texture
  */
 class TextureProvider {
 public:
@@ -63,15 +63,15 @@ public:
      */
     [[nodiscard]] virtual bool isAnimated () const = 0;
     /**
-     * @return Number of columns in spritesheet grid (0 if not a spritesheet)
+     * @return Number of columns in the spritesheet grid (0 if not a spritesheet)
      */
     [[nodiscard]] virtual uint32_t getSpritesheetCols () const = 0;
     /**
-     * @return Number of rows in spritesheet grid (0 if not a spritesheet)
+     * @return Number of rows in a spritesheet grid (0 if not a spritesheet)
      */
     [[nodiscard]] virtual uint32_t getSpritesheetRows () const = 0;
     /**
-     * @return Total number of frames in spritesheet (0 if not a spritesheet)
+     * @return Total number of frames in the spritesheet (0 if not a spritesheet)
      */
     [[nodiscard]] virtual uint32_t getSpritesheetFrames () const = 0;
     /**

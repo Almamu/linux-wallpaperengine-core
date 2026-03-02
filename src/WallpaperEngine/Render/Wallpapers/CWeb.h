@@ -16,6 +16,7 @@
 #include "WallpaperEngine/WebBrowser/CEF/RenderHandler.h"
 
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
+#include "WallpaperEngine/Input/MouseClickStatus.h"
 
 namespace WallpaperEngine::WebBrowser::CEF {
 class RenderHandler;
@@ -27,7 +28,7 @@ public:
     CWeb (
 	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
 	WallpaperEngine::WebBrowser::WebBrowserContext& browserContext,
-	const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
+	wp_mouse_input* mouseInput
     );
     ~CWeb () override;
     [[nodiscard]] int getWidth () const override { return this->m_width; }
@@ -37,8 +38,8 @@ public:
     void setSize (int width, int height);
 
 protected:
-    void renderFrame (const glm::ivec4& viewport) override;
-    void updateMouse (const glm::ivec4& viewport);
+    void renderFrame () override;
+    void updateMouse ();
     const Web& getWeb () const { return *this->getWallpaperData ().as<Web> (); }
 
     friend class CWallpaper;

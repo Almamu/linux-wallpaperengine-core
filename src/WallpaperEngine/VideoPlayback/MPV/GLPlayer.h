@@ -1,12 +1,14 @@
 #pragma once
 
-#include "MemoryStreamProtocol.h"
-#include "WallpaperEngine/Render/RenderContext.h"
+#include <filesystem>
+#include <optional>
 
 #include <GL/glew.h>
 #include <mpv/client.h>
 #include <mpv/render.h>
-#include <string>
+
+#include "MemoryStreamProtocol.h"
+#include "WallpaperEngine/Render/RenderContext.h"
 
 namespace WallpaperEngine::VideoPlayback::MPV {
 class GLPlayer : public Helpers::ContextAware {

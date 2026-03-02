@@ -2,12 +2,13 @@
 
 #include "CSound.h"
 
+#include "WallpaperEngine/Context.h"
 #include "WallpaperEngine/FileSystem/Container.h"
 
 using namespace WallpaperEngine::Render::Objects;
 
 CSound::CSound (Wallpapers::CScene& scene, const Sound& sound) : CObject (scene, sound), m_sound (sound) {
-    if (this->getContext ().getApp ().getContext ().settings.audio.enabled) {
+    if (this->getContext ().getContext ().config->enableAudio) {
 	this->load ();
     }
 }

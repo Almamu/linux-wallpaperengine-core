@@ -1,5 +1,7 @@
 #pragma once
 
+#include "WallpaperEngine/Data/Utils/BinaryReader.h"
+
 #include <string>
 
 extern "C" {
@@ -31,15 +33,13 @@ extern "C" {
 namespace WallpaperEngine::Audio {
 class AudioContext;
 
-using namespace WallpaperEngine::FileSystem;
-
 /**
  * Represents a playable audio stream for the audio driver
  */
 class AudioStream {
 public:
     AudioStream (AudioContext& context, const std::string& filename);
-    AudioStream (AudioContext& context, const ReadStreamSharedPtr& buffer);
+    AudioStream (AudioContext& context, const Data::Utils::ReadStreamSharedPtr& buffer);
     AudioStream (AudioContext& audioContext, AVCodecContext* context);
     ~AudioStream ();
 
@@ -90,7 +90,7 @@ public:
     /**
      * @return The file data buffer
      */
-    [[nodiscard]] ReadStreamSharedPtr& getBuffer ();
+    [[nodiscard]] Data::Utils::ReadStreamSharedPtr& getBuffer ();
     /**
      * @return The SDL_cond used to signal waiting for data
      */
@@ -172,7 +172,7 @@ private:
     /** The stream index for the audio being played */
     int m_audioStream = NO_AUDIO_STREAM;
     /** File data pointer */
-    ReadStreamSharedPtr m_buffer = nullptr;
+    Data::Utils::ReadStreamSharedPtr m_buffer = nullptr;
     /** The length of the file data pointer */
     uint32_t m_length = 0;
 

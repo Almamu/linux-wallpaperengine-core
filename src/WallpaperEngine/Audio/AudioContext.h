@@ -1,9 +1,9 @@
 #pragma once
 
-#include <libavutil/samplefmt.h>
-#include <vector>
+#include <memory>
 
-#include "WallpaperEngine/Application/ApplicationContext.h"
+#include <libavutil/samplefmt.h>
+
 #include "WallpaperEngine/Audio/Drivers/Recorders/PulseAudioPlaybackRecorder.h"
 
 namespace WallpaperEngine {
@@ -24,7 +24,7 @@ namespace Audio {
 
     class AudioContext {
     public:
-	explicit AudioContext (Drivers::AudioDriver& driver);
+	explicit AudioContext (std::unique_ptr<Drivers::AudioDriver> driver);
 
 	/**
 	 * Registers the given stream in the driver for playing
@@ -53,10 +53,6 @@ namespace Audio {
 	 */
 	[[nodiscard]] int getChannels () const;
 	/**
-	 * @return The application context under which the audio driver is initialized
-	 */
-	Application::ApplicationContext& getApplicationContext () const;
-	/**
 	 * @return The audio recorder to use to capture stereo mix data
 	 */
 	[[nodiscard]] Drivers::Recorders::PlaybackRecorder& getRecorder () const;
@@ -68,7 +64,7 @@ namespace Audio {
 
     private:
 	/** The audio driver in use */
-	Drivers::AudioDriver& m_driver;
+	std::unique_ptr<Drivers::AudioDriver> m_driver;
     };
 } // namespace Audio
 } // namespace WallpaperEngine

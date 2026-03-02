@@ -11,10 +11,10 @@ using namespace WallpaperEngine::Render;
 
 CWallpaper::CWallpaper (
     const Wallpaper& wallpaperData, RenderContext& context, AudioContext& audioContext,
-    const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
+    wp_mouse_input* mouseInput
 ) :
     ContextAware (context), FBOProvider (nullptr), m_wallpaperData (wallpaperData), m_audioContext (audioContext),
-    m_state (scalingMode, clampMode) {
+    m_mouseInput (mouseInput) {
     // generate the VAO to stop opengl from complaining
     glGenVertexArrays (1, &this->m_vaoBuffer);
     glBindVertexArray (this->m_vaoBuffer);
@@ -182,60 +182,11 @@ void CWallpaper::setupShaders () {
 
 void CWallpaper::setDestinationFramebuffer (GLuint framebuffer) { this->m_destFramebuffer = framebuffer; }
 
-void CWallpaper::updateUVs (const glm::ivec4& viewport, const bool vflip) {
-    // update UVs if something has changed, otherwise use old values
-    if (this->m_state.hasChanged (viewport, vflip, this->getWidth (), this->getHeight ())) {
-	// Update wallpaper state
-	this->m_state.updateState (viewport, vflip, this->getWidth (), this->getHeight ());
-    }
-}
-
-void CWallpaper::render (const glm::ivec4& viewport, const bool vflip) {
+void CWallpaper::render () {
 #if !NDEBUG
     glPushDebugGroup (GL_DEBUG_SOURCE_APPLICATION, 0, -1, "Rendering scene");
 #endif /* !NDEBUG */
-    this->renderFrame (viewport);
-#if !NDEBUG
-    glPopDebugGroup ();
-    glPushDebugGroup (GL_DEBUG_SOURCE_APPLICATION, 0, -1, "Rendering scene to output");
-#endif /* !NDEBUG */
-    // Update UVs coordinates according to scaling mode of this wallpaper
-    updateUVs (viewport, vflip);
-    auto [ustart, uend, vstart, vend] = this->m_state.getTextureUVs ();
-
-    const GLfloat texCoords[] = {
-	ustart, vstart, uend, vstart, ustart, vend, ustart, vend, uend, vstart, uend, vend,
-    };
-
-    glViewport (viewport.x, viewport.y, viewport.z, viewport.w);
-
-    glBindFramebuffer (GL_FRAMEBUFFER, this->m_destFramebuffer);
-
-    glBindVertexArray (this->m_vaoBuffer);
-
-    glDisable (GL_BLEND);
-    glDisable (GL_DEPTH_TEST);
-    glDisable (GL_CULL_FACE);
-    // do not use any shader
-    glUseProgram (this->m_shader);
-    // activate scene texture
-    glActiveTexture (GL_TEXTURE0);
-    glBindTexture (GL_TEXTURE_2D, this->getWallpaperTexture ());
-    // set uniforms and attribs
-    glEnableVertexAttribArray (this->a_TexCoord);
-    glBindBuffer (GL_ARRAY_BUFFER, this->m_texCoordBuffer);
-    glBufferData (GL_ARRAY_BUFFER, sizeof (texCoords), texCoords, GL_STATIC_DRAW);
-    glVertexAttribPointer (this->a_TexCoord, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glEnableVertexAttribArray (this->a_Position);
-    glBindBuffer (GL_ARRAY_BUFFER, this->m_positionBuffer);
-    glVertexAttribPointer (this->a_Position, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glUniform1i (this->g_Texture0, 0);
-    // write the framebuffer as is to the screen
-    glBindBuffer (GL_ARRAY_BUFFER, this->m_texCoordBuffer);
-    glDrawArrays (GL_TRIANGLES, 0, 6);
-
+    this->renderFrame ();
 #if !NDEBUG
     glPopDebugGroup ();
 #endif /* !NDEBUG */
@@ -246,19 +197,16 @@ void CWallpaper::setPause (bool newState) { }
 void CWallpaper::setupFramebuffers () {
     const uint32_t width = this->getWidth ();
     const uint32_t height = this->getHeight ();
-    const uint32_t clamp = this->m_state.getClampingMode ();
 
     // create framebuffer for the scene
     this->m_sceneFBO = this->create (
-	"_rt_FullFrameBuffer", TextureFormat_ARGB8888, clamp, 1.0, { width, height }, { width, height }
+	"_rt_FullFrameBuffer", TextureFormat_ARGB8888, TextureFlags_NoFlags, 1.0, { width, height }, { width, height }
     );
 
     this->alias ("_rt_MipMappedFrameBuffer", "_rt_FullFrameBuffer");
 }
 
 AudioContext& CWallpaper::getAudioContext () const { return this->m_audioContext; }
-
-const WallpaperState& CWallpaper::getState () const { return this->m_state; }
 
 std::shared_ptr<const CFBO> CWallpaper::findFBO (const std::string& name) const {
     const auto fbo = this->find (name);
@@ -272,26 +220,40 @@ std::shared_ptr<const CFBO> CWallpaper::findFBO (const std::string& name) const 
 
 std::shared_ptr<const CFBO> CWallpaper::getFBO () const { return this->m_sceneFBO; }
 
+glm::dvec2 CWallpaper::getLiveMousePosition () const {
+    if (this->m_mouseInput == nullptr) {
+        return {0, 0};
+    }
+
+    return {
+        this->m_mouseInput->get_x (this->m_mouseInput->user_parameter),
+        this->m_mouseInput->get_y (this->m_mouseInput->user_parameter)
+    };
+}
+
+wp_mouse_input* CWallpaper::getMouseInputHandler () const {
+    return this->m_mouseInput;
+}
+
 std::unique_ptr<CWallpaper> CWallpaper::fromWallpaper (
     const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-    WebBrowser::WebBrowserContext* browserContext, const WallpaperState::TextureUVsScaling& scalingMode,
-    const uint32_t& clampMode
+    WebBrowser::WebBrowserContext* browserContext, wp_mouse_input* mouseInput
 ) {
     if (wallpaper.is<Scene> ()) {
 	return std::make_unique<WallpaperEngine::Render::Wallpapers::CScene> (
-	    wallpaper, context, audioContext, scalingMode, clampMode
+	    wallpaper, context, audioContext, mouseInput
 	);
     }
 
     if (wallpaper.is<Video> ()) {
 	return std::make_unique<WallpaperEngine::Render::Wallpapers::CVideo> (
-	    wallpaper, context, audioContext, scalingMode, clampMode
+	    wallpaper, context, audioContext
 	);
     }
 
     if (wallpaper.is<Web> ()) {
 	return std::make_unique<WallpaperEngine::Render::Wallpapers::CWeb> (
-	    wallpaper, context, audioContext, *browserContext, scalingMode, clampMode
+	    wallpaper, context, audioContext, *browserContext, mouseInput
 	);
     }
 

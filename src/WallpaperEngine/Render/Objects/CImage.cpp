@@ -1,6 +1,7 @@
 #include "CImage.h"
 
 #include "CRenderable.h"
+#include "WallpaperEngine/Context.h"
 
 #include <sstream>
 
@@ -538,7 +539,7 @@ void CImage::updateScreenSpacePosition () {
     // Apply parallax displacement if enabled
     if (this->getScene ().getScene ().camera.parallax.enabled
 	&& !this->getImage ().model->fullscreen
-	&& !this->getScene ().getContext ().getApp ().getContext ().settings.mouse.disableparallax) {
+	&& !this->getScene ().getContext ().getContext ().config->disableParallax) {
 	const double parallaxAmount = this->getScene ().getScene ().camera.parallax.amount->value->getFloat ();
 	const glm::vec2 depth = this->getImage ().parallaxDepth->value->getVec2 ();
 	const glm::vec2* displacement = this->getScene ().getParallaxDisplacement ();

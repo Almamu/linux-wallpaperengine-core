@@ -1,4 +1,6 @@
 #include "AudioStream.h"
+
+#include "Drivers/AudioDriver.h"
 #include "WallpaperEngine/Logging/Log.h"
 #include <cassert>
 #include <cmath>
@@ -18,7 +20,7 @@ int audio_read_thread (void* arg) {
 	sLog.exception ("Cannot create mutex for audio playback waiting");
     }
 
-    while (ret >= 0 && stream->getAudioContext ().getApplicationContext ().state.general.keepRunning
+    while (ret >= 0 && stream->getAudioContext ().getDriver ().getContext ().isRunning
 	   && stream->isInitialized ()) {
 	// give the cpu some time to play the queued frames if there's enough info there
 	if (stream->getQueueSize () >= MAX_QUEUE_SIZE
@@ -110,7 +112,7 @@ AudioStream::AudioStream (AudioContext& context, const std::string& filename) : 
     this->loadCustomContent (filename.c_str ());
 }
 
-AudioStream::AudioStream (AudioContext& context, const ReadStreamSharedPtr& buffer) : m_audioContext (context) {
+AudioStream::AudioStream (AudioContext& context, const Data::Utils::ReadStreamSharedPtr& buffer) : m_audioContext (context) {
     // setup a custom context first
     this->m_formatContext = avformat_alloc_context ();
 
@@ -372,7 +374,7 @@ void AudioStream::dequeuePacket () {
 
     SDL_LockMutex (this->m_queue->mutex);
 
-    while (this->m_audioContext.getApplicationContext ().state.general.keepRunning) {
+    while (this->m_audioContext.getDriver ().getContext ().isRunning) {
 #if FF_API_FIFO_OLD_API
 	int ret = -1;
 
@@ -414,7 +416,7 @@ void AudioStream::setRepeat (const bool newRepeat) { this->m_repeat = newRepeat;
 
 bool AudioStream::isRepeat () const { return this->m_repeat; }
 
-ReadStreamSharedPtr& AudioStream::getBuffer () { return this->m_buffer; }
+WallpaperEngine::Data::Utils::ReadStreamSharedPtr& AudioStream::getBuffer () { return this->m_buffer; }
 
 SDL_cond* AudioStream::getWaitCondition () const { return this->m_queue->wait; }
 
@@ -570,8 +572,8 @@ int AudioStream::decodeFrame (uint8_t* audioBuffer, const int bufferSize) {
     static int audio_pkt_size = 0;
 
     // block until there's any data in the buffers
-    while (this->m_audioContext.getApplicationContext ().state.general.keepRunning) {
-	while (audio_pkt_size > 0 && this->m_audioContext.getApplicationContext ().state.general.keepRunning) {
+    while (this->m_audioContext.getDriver ().getContext ().isRunning) {
+	while (audio_pkt_size > 0 && this->m_audioContext.getDriver ().getContext ().isRunning) {
 	    int got_frame = 0;
 	    int ret = avcodec_receive_frame (this->getContext (), this->m_decodeFrame);
 

@@ -10,8 +10,7 @@ using namespace WallpaperEngine::VideoPlayback::MPV;
 class CVideo final : public CWallpaper {
 public:
     CVideo (
-	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-	const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
+	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext
     );
 
     ~CVideo () override;
@@ -24,7 +23,7 @@ public:
     void setPause (bool newState) override;
 
 protected:
-    void renderFrame (const glm::ivec4& viewport) override;
+    void renderFrame () override;
 
     friend class CWallpaper;
 

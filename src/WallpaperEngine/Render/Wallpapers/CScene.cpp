@@ -2,9 +2,9 @@
 #include "WallpaperEngine/Render/Objects/CParticle.h"
 #include "WallpaperEngine/Render/Objects/CSound.h"
 
-#include "WallpaperEngine/Render/WallpaperState.h"
-
 #include "CScene.h"
+
+#include "WallpaperEngine/Context.h"
 #include "WallpaperEngine/Logging/Log.h"
 
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
@@ -22,8 +22,8 @@ using JSON = WallpaperEngine::Data::JSON::JSON;
 
 CScene::CScene (
     const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-    const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
-) : CWallpaper (wallpaper, context, audioContext, scalingMode, clampMode) {
+    wp_mouse_input* input
+) : CWallpaper (wallpaper, context, audioContext, input) {
     // caller should check this, if not a std::bad_cast is good to throw
     auto scene = wallpaper.as<Scene> ();
 
@@ -200,7 +200,7 @@ Render::CObject* CScene::createObject (const Object& object) {
     } else if (object.is<Sound> ()) {
 	renderObject = new Objects::CSound (*this, *object.as<Sound> ());
     } else if (object.is<Particle> ()) {
-	if (this->getContext ().getApp ().getContext ().settings.general.disableParticles == true) {
+	if (this->getContext ().getContext ().config->disableParticles) {
 	    sLog.debug ("Ignoring particle system (disabled in settings): ", object.as<Particle> ()->name);
 	    return nullptr;
 	}
@@ -263,13 +263,12 @@ void CScene::addObjectToRenderOrder (const Object& object) {
 
 Camera& CScene::getCamera () const { return *this->m_camera; }
 
-void CScene::renderFrame (const glm::ivec4& viewport) {
+void CScene::renderFrame () {
     // ensure the virtual mouse position is up to date
-    this->updateMouse (viewport);
+    this->updateMouse ();
 
     // update the parallax position if required
-    if (this->getScene ().camera.parallax.enabled->value->getBool ()
-	&& !this->getContext ().getApp ().getContext ().settings.mouse.disableparallax) {
+    if (this->getScene ().camera.parallax.enabled->value->getBool () && !this->getContext ().getContext ().config->disableParallax) {
 	const float influence = this->getScene ().camera.parallax.mouseInfluence->value->getFloat ();
 	const float amount = this->getScene ().camera.parallax.amount->value->getFloat ();
 	const float delay = glm::min (
@@ -315,27 +314,17 @@ void CScene::renderFrame (const glm::ivec4& viewport) {
     }
 }
 
-void CScene::updateMouse (const glm::ivec4& viewport) {
+void CScene::updateMouse () {
     // update virtual mouse position first
-    const glm::dvec2 position = this->getContext ().getInputContext ().getMouseInput ().position ();
+    // TODO: BETTER NAME THIS AND CHECK LOGIC
+    const glm::dvec2 position = this->getLiveMousePosition ();
 
-    // rollover the position to the last
+    // roll over the position to the last
     this->m_mousePositionLast = this->m_mousePosition;
 
-    // calculate the current position of the mouse in viewport space [0, 1]
-    double mouseX = glm::clamp ((position.x - viewport.x) / viewport.z, 0.0, 1.0);
-    // Normalize Y coordinate (OpenGL convention: 0=bottom, 1=top)
-    // Particle code expects this convention: 0=bottom results in negative Y (down), 1=top results in positive Y (up)
-    double mouseY = glm::clamp ((position.y - viewport.y) / viewport.w, 0.0, 1.0);
-
-    // Account for UV cropping when using fill/fit scaling modes
-    // The scene may be rendered larger than viewport and cropped via UVs
-    const auto uvs = this->getState ().getTextureUVs ();
-
-    // Map mouse position from viewport space to scene UV space
-    // UVs define what portion of the scene texture is visible
-    this->m_mousePosition.x = uvs.ustart + mouseX * (uvs.uend - uvs.ustart);
-    this->m_mousePosition.y = uvs.vstart + mouseY * (uvs.vend - uvs.vstart);
+    // position is already inside the background, convert it to viewport space
+    this->m_mousePosition.x = position.x / this->getWidth ();
+    this->m_mousePosition.y = position.y / this->getHeight ();
 }
 
 const Scene& CScene::getScene () const { return *this->getWallpaperData ().as<Scene> (); }

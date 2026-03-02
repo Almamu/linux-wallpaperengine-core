@@ -15,7 +15,7 @@ namespace WallpaperEngine::WebBrowser::CEF {
  */
 class BrowserApp : public SubprocessApp, public CefBrowserProcessHandler {
 public:
-    explicit BrowserApp (WallpaperEngine::Application::WallpaperApplication& application);
+    explicit BrowserApp (Context& context);
 
     [[nodiscard]] CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler () override;
 

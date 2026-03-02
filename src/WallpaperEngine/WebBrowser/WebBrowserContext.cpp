@@ -3,7 +3,6 @@
 #include "WallpaperEngine/Logging/Log.h"
 #include "WallpaperEngine/WebBrowser/CEF/SubprocessApp.h"
 #include "include/cef_app.h"
-#include "include/cef_render_handler.h"
 #include <filesystem>
 #include <random>
 
@@ -44,10 +43,10 @@ std::string generate_uuid_v4 () {
 }
 }
 
-WebBrowserContext::WebBrowserContext (WallpaperEngine::Application::WallpaperApplication& wallpaperApplication) :
-    m_browserApplication (nullptr), m_wallpaperApplication (wallpaperApplication) {
+WebBrowserContext::WebBrowserContext (Context& context) :
+    m_context (context) {
     CefMainArgs main_args (
-	this->m_wallpaperApplication.getContext ().getArgc (), this->m_wallpaperApplication.getContext ().getArgv ()
+	this->getContext ().getArgc (), this->m_wallpaperApplication.getContext ().getArgv ()
     );
 
     // only care about app if the process is the main process
@@ -59,9 +58,9 @@ WebBrowserContext::WebBrowserContext (WallpaperEngine::Application::WallpaperApp
     commandLine->InitFromArgv (main_args.argc, main_args.argv);
 
     if (!commandLine->HasSwitch ("type")) {
-	this->m_browserApplication = new CEF::BrowserApp (wallpaperApplication);
+	this->m_browserApplication = new CEF::BrowserApp (this->getContext ());
     } else {
-	this->m_browserApplication = new CEF::SubprocessApp (wallpaperApplication);
+	this->m_browserApplication = new CEF::SubprocessApp (this->getContext ());
     }
 
     // this blocks for anything not-main-thread
@@ -98,3 +97,5 @@ WebBrowserContext::~WebBrowserContext () {
     sLog.out ("Shutting down CEF");
     CefShutdown ();
 }
+
+WallpaperEngine::Context& WebBrowserContext::getContext () const { return this->m_context; }

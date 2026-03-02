@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "frontends/project.h"
+
 #include "WallpaperEngine/Audio/AudioContext.h"
 
 #include "WallpaperEngine/Render/CFBO.h"
@@ -12,7 +14,7 @@
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
 
 #include "FBOProvider.h"
-#include "WallpaperState.h"
+#include "WallpaperEngine/Assets/AssetLocator.h"
 
 namespace WallpaperEngine::Application {
 class WallpaperApplication;
@@ -30,11 +32,8 @@ namespace Helpers {
 using namespace WallpaperEngine::Render;
 using namespace WallpaperEngine::Audio;
 using namespace WallpaperEngine::Data::Model;
-using namespace WallpaperEngine::FileSystem;
 
 class CWallpaper : public Helpers::ContextAware, public FBOProvider {
-    friend class WallpaperEngine::Application::WallpaperApplication;
-
 public:
     template <class T> [[nodiscard]] const T* as () const {
 	if (is<T> ()) {
@@ -59,7 +58,7 @@ public:
     /**
      * Performs a render pass of the wallpaper
      */
-    void render (const glm::ivec4& viewport, const bool vflip);
+    void render ();
 
     /**
      * Pause the renderer
@@ -69,17 +68,12 @@ public:
     /**
      * @return The container to resolve files for this wallpaper
      */
-    [[nodiscard]] const AssetLocator& getAssetLocator () const;
+    [[nodiscard]] const Assets::AssetLocator& getAssetLocator () const;
 
     /**
      * @return The current audio context for this wallpaper
      */
     AudioContext& getAudioContext () const;
-
-    /**
-     * @return The wallpaper state
-     */
-    [[nodiscard]] const WallpaperState& getState () const;
 
     /**
      * @return The scene's framebuffer
@@ -101,11 +95,6 @@ public:
      * @return The main FBO of this wallpaper
      */
     [[nodiscard]] std::shared_ptr<const CFBO> getFBO () const;
-
-    /**
-     * Updates the UVs coordinates if window/screen/vflip/projection has changed
-     */
-    void updateUVs (const glm::ivec4& viewport, const bool vflip);
 
     /**
      * Updates the destination framebuffer for this wallpaper
@@ -130,31 +119,34 @@ public:
      * @param wallpaper
      * @param context
      * @param audioContext
-     * @param scalingMode
+     * @param browserContext
+     * @param mouseInput
      *
      * @return
      */
     static std::unique_ptr<CWallpaper> fromWallpaper (
 	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-	WebBrowser::WebBrowserContext* browserContext, const WallpaperState::TextureUVsScaling& scalingMode,
-	const uint32_t& clampMode
+	WebBrowser::WebBrowserContext* browserContext, wp_mouse_input* mouseInput
     );
 
 protected:
     CWallpaper (
 	const Wallpaper& wallpaperData, RenderContext& context, AudioContext& audioContext,
-	const WallpaperState::TextureUVsScaling& scalingMode, const uint32_t& clampMode
+	wp_mouse_input* input
     );
 
     /**
      * Renders a frame of the wallpaper
      */
-    virtual void renderFrame (const glm::ivec4& viewport) = 0;
+    virtual void renderFrame () = 0;
 
     /**
      * Setups OpenGL's framebuffers for ping-pong and scene rendering
      */
     void setupFramebuffers ();
+
+    glm::dvec2 getLiveMousePosition () const;
+    wp_mouse_input* getMouseInputHandler () const;
 
     const Wallpaper& m_wallpaperData;
 
@@ -183,6 +175,6 @@ private:
     /** Audio context that is using this wallpaper */
     AudioContext& m_audioContext;
     /** Current Wallpaper state */
-    WallpaperState m_state;
+    wp_mouse_input* m_mouseInput;
 };
 } // namespace WallpaperEngine::Render

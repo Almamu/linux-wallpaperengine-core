@@ -1,4 +1,7 @@
 #include "CPass.h"
+
+#include "WallpaperEngine/Context.h"
+
 #include <sstream>
 #include <utility>
 
@@ -173,7 +176,7 @@ void CPass::setupRenderTexture () {
     if (texture->isAnimated ()) {
 	// calculate current texture and frame
 	double currentRenderTime = fmod (
-	    static_cast<double> (this->getContext ().getDriver ().getRenderTime ()),
+	    this->getContext ().getContext ().renderTime,
 	    this->m_renderable.getAnimationTime ()
 	);
 

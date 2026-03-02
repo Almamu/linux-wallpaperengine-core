@@ -1,8 +1,7 @@
 #pragma once
 
-#include <vector>
+#include "WallpaperEngine/Context.h"
 
-#include "WallpaperEngine/Application/ApplicationContext.h"
 #include "WallpaperEngine/Audio/AudioStream.h"
 #include "WallpaperEngine/Audio/Drivers/Detectors/AudioPlayingDetector.h"
 #include "WallpaperEngine/Audio/Drivers/Recorders/PlaybackRecorder.h"
@@ -30,8 +29,8 @@ namespace Audio {
 	class AudioDriver {
 	public:
 	    explicit AudioDriver (
-		Application::ApplicationContext& applicationContext, Detectors::AudioPlayingDetector& detector,
-		Recorders::PlaybackRecorder& recorder
+		Context& applicationContext, std::unique_ptr<Detectors::AudioPlayingDetector> detector,
+		std::unique_ptr<Recorders::PlaybackRecorder> recorder
 	    );
 
 	    virtual ~AudioDriver () = default;
@@ -70,7 +69,7 @@ namespace Audio {
 	    /**
 	     * @return The application context under which the audio driver is initialized
 	     */
-	    Application::ApplicationContext& getApplicationContext () const;
+	    Context& getContext () const;
 	    /**
 	     * @return The audio playing detector to use to stop playing sound when something else starts playing
 	     */
@@ -81,9 +80,9 @@ namespace Audio {
 	    [[nodiscard]] Recorders::PlaybackRecorder& getRecorder () const;
 
 	private:
-	    Application::ApplicationContext& m_applicationContext;
-	    Detectors::AudioPlayingDetector& m_detector;
-	    Recorders::PlaybackRecorder& m_recorder;
+	    Context& m_context;
+	    std::unique_ptr<Detectors::AudioPlayingDetector> m_detector;
+	    std::unique_ptr<Recorders::PlaybackRecorder> m_recorder;
 	};
     } // namespace Drivers
 } // namespace Audio

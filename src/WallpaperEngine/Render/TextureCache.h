@@ -17,9 +17,10 @@ namespace Helpers {
 
 class RenderContext;
 
-class TextureCache final : Helpers::ContextAware {
+class TextureCache final {
 public:
-    explicit TextureCache (RenderContext& context);
+    TextureCache ();
+    ~TextureCache() = default;
 
     /**
      * Checks if the given texture was already loaded and returns it

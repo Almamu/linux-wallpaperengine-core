@@ -3,8 +3,8 @@
 
 using namespace WallpaperEngine::WebBrowser::CEF;
 
-BrowserApp::BrowserApp (WallpaperEngine::Application::WallpaperApplication& application) :
-    SubprocessApp (application) { }
+BrowserApp::BrowserApp (Context& context) :
+    SubprocessApp (context) { }
 
 CefRefPtr<CefBrowserProcessHandler> BrowserApp::GetBrowserProcessHandler () { return this; }
 

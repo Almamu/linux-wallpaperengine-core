@@ -1,3 +1,5 @@
+#include <ranges>
+
 #include "SDLAudioDriver.h"
 #include "WallpaperEngine/Logging/Log.h"
 
@@ -35,7 +37,7 @@ void audio_callback (void* userdata, uint8_t* streamData, int length) {
 	    continue;
 	}
 
-	while (streamLength > 0 && driver->getApplicationContext ().state.general.keepRunning) {
+	while (streamLength > 0 && driver->getContext ().isRunning) {
 	    if (buffer->audio_buf_index >= buffer->audio_buf_size) {
 		// get more data to fill the buffer
 		int audio_size = buffer->stream->decodeFrame (buffer->audio_buf, sizeof (buffer->audio_buf));
@@ -60,7 +62,7 @@ void audio_callback (void* userdata, uint8_t* streamData, int length) {
 	    // mix the audio
 	    SDL_MixAudioFormat (
 		streamDataPointer, &buffer->audio_buf[buffer->audio_buf_index], driver->getSpec ().format, len1,
-		driver->getApplicationContext ().state.audio.volume
+		driver->getContext ().config->volume
 	    );
 
 	    streamLength -= len1;
@@ -74,9 +76,9 @@ void audio_callback (void* userdata, uint8_t* streamData, int length) {
 }
 
 SDLAudioDriver::SDLAudioDriver (
-    Application::ApplicationContext& applicationContext, Detectors::AudioPlayingDetector& detector,
-    Recorders::PlaybackRecorder& recorder
-) : AudioDriver (applicationContext, detector, recorder), m_audioSpec () {
+    Context& applicationContext, std::unique_ptr<Detectors::AudioPlayingDetector> detector,
+    std::unique_ptr<Recorders::PlaybackRecorder> recorder
+) : AudioDriver (applicationContext, std::move (detector), std::move (recorder)), m_audioSpec () {
     this->m_streamListMutex = SDL_CreateMutex ();
 
     if (SDL_InitSubSystem (SDL_INIT_AUDIO) < 0) {
