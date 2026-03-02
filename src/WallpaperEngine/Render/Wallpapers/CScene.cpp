@@ -10,9 +10,6 @@
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
 #include "WallpaperEngine/Data/Parsers/ObjectParser.h"
 
-extern float g_Time;
-extern float g_TimeLast;
-
 using namespace WallpaperEngine;
 using namespace WallpaperEngine::Render;
 using namespace WallpaperEngine::Data::Model;
@@ -272,7 +269,8 @@ void CScene::renderFrame () {
 	const float influence = this->getScene ().camera.parallax.mouseInfluence->value->getFloat ();
 	const float amount = this->getScene ().camera.parallax.amount->value->getFloat ();
 	const float delay = glm::min (
-	    static_cast<float> (this->getScene ().camera.parallax.delay->value->getBool ()), g_Time - g_TimeLast
+	    static_cast<float> (this->getScene ().camera.parallax.delay->value->getBool ()),
+	    this->getContext ().getContext ().renderTime - this->getContext ().getContext ().renderTimeLast
 	);
 
 	this->m_parallaxDisplacement

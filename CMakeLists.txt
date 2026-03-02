@@ -146,7 +146,9 @@ endif()
 if(DEMOMODE)
     set(DEMOMODE_SOURCES
         src/recording.cpp
-        src/recording.h)
+        src/recording.h
+            src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp
+            src/WallpaperEngine/WebBrowser/WebBrowserHelper.h)
     message(WARNING "Enabling demo mode will automatically record 5 seconds and stop the software. This is used internally to produce the video seen on the website as a sort of status report")
 endif()
 
@@ -175,9 +177,13 @@ include_directories(
     ${CMAKE_SOURCE_DIR})
 
 set(COMMON_SOURCES
-    src/frontends/project.h
-    src/frontends/configuration.h
+    include/frontends/project.h
+    include/frontends/configuration.h
     src/frontends/configuration.cpp
+    src/frontends/project.cpp
+    include/frontends/context.h
+    src/frontends/context.cpp
+    include/frontends/pulseaudio.h
 
     src/External/MimeTypes/MimeTypes.cpp
     src/External/MimeTypes/MimeTypes.h
@@ -207,6 +213,8 @@ set(COMMON_SOURCES
     src/WallpaperEngine/FileSystem/Adapters/Package.h
     src/WallpaperEngine/FileSystem/Adapters/Virtual.cpp
     src/WallpaperEngine/FileSystem/Adapters/Virtual.h
+
+    src/WallpaperEngine/Input/MouseClickStatus.h
 
     src/WallpaperEngine/Audio/Drivers/Recorders/PulseAudioPlaybackRecorder.cpp
     src/WallpaperEngine/Audio/Drivers/Recorders/PulseAudioPlaybackRecorder.h
@@ -358,13 +366,9 @@ set(COMMON_SOURCES
     src/WallpaperEngine/VideoPlayback/MPV/GLPlayer.h
     src/WallpaperEngine/VideoPlayback/MPV/MemoryStreamProtocol.cpp
     src/WallpaperEngine/VideoPlayback/MPV/MemoryStreamProtocol.h
-        src/frontends/project.cpp
-        src/frontends/context.h
-        src/frontends/context.cpp
-        src/WallpaperEngine/Context.h
-        src/frontends/pulseaudio.h
-        src/WallpaperEngine/Input/MouseClickStatus.h
-    src/WallpaperEngine/VideoPlayback/MPV/MemoryStreamProtocol.h
+
+    src/WallpaperEngine/Configuration.h
+    src/WallpaperEngine/Context.h
     src/WallpaperEngine/Scripting/ScriptEngine.h
     src/WallpaperEngine/Scripting/ScriptEngine.cpp
     src/WallpaperEngine/Data/Model/ScriptedDynamicValue.h
@@ -391,6 +395,30 @@ add_library(
 
     ${COMMON_SOURCES}
     ${DEMOMODE_SOURCES})
+
+add_executable(linux-wallpaperengine-webhelper
+        src/WallpaperEngine/WebBrowser/WebBrowserHelper.h
+        src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp)
+
+set(WPENGINE_INSTALL_LIBDIR "lib/${PROJECT_NAME}")
+
+target_link_libraries(linux-wallpaperengine-webhelper PUBLIC
+    linux-wallpaperengine-core)
+
+target_compile_definitions(linux-wallpaperengine-core PRIVATE
+    WPENGINE_WEBHELPER_PATH="${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_LIBDIR}/linux-wallpaperengine-webhelper")
+
+set_target_properties(linux-wallpaperengine-webhelper PROPERTIES
+    SKIP_BUILD_RPATH FALSE
+    BUILD_WITH_INSTALL_RPATH FALSE
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_LIBDIR}"
+    INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+set_target_properties(linux-wallpaperengine-core PROPERTIES
+    SKIP_BUILD_RPATH FALSE
+    BUILD_WITH_INSTALL_RPATH FALSE
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_LIBDIR}"
+    INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 target_link_libraries (linux-wallpaperengine-core PUBLIC
     ${OPENGL_LIBRARIES}
@@ -445,6 +473,7 @@ if (BUILD_TESTING)
 endif()
 
 target_include_directories(linux-wallpaperengine-core PUBLIC
+    include
     src
     src/External/glslang-WallpaperEngine
     src/External/SPIRV-Cross-WallpaperEngine
@@ -473,5 +502,11 @@ add_dependencies(linux-wallpaperengine-core libcef_dll_wrapper glslang spirv-cro
 REPLACED_SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
 
 # set some install parameters if not in debug mode
-install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION .)
-install(FILES ${TARGET_OUTPUT_DIRECTORY}/${PROJECT_NAME} PERMISSIONS OWNER_READ OWNER_WRITE WORLD_EXECUTE WORLD_READ GROUP_READ DESTINATION .)
+install(TARGETS linux-wallpaperengine-core linux-wallpaperengine-webhelper
+        LIBRARY DESTINATION ${WPENGINE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${WPENGINE_INSTALL_LIBDIR})
+
+install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION ${WPENGINE_INSTALL_LIBDIR}
+        FILES_MATCHING PATTERN "*.so*" PATTERN "*.bin" PATTERN "*.dat" PATTERN "*.pak" PATTERN "locales/*")
+
+install(DIRECTORY include/frontends/ DESTINATION include/${PROJECT_NAME})

@@ -1,4 +1,6 @@
 #include "CParticle.h"
+
+#include "WallpaperEngine/Context.h"
 #include "WallpaperEngine/Data/Model/Property.h"
 #include "WallpaperEngine/Logging/Log.h"
 #include "WallpaperEngine/Render/Utils/NoiseUtils.h"
@@ -8,8 +10,6 @@
 #include <cmath>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-extern float g_Time;
 
 using namespace WallpaperEngine::Render::Objects;
 using namespace WallpaperEngine::Render::Utils;
@@ -201,7 +201,7 @@ void CParticle::render () {
 
     // Initialize time on first render to avoid huge dt spike
     if (m_time == 0.0) {
-	m_time = g_Time;
+	m_time = this->getContext ().getContext ().renderTime;
 	// Skip update on first frame to avoid weird initial burst
 	// This ensures all particles start from a clean state
 	if (m_useRopeRenderer) {
@@ -213,8 +213,8 @@ void CParticle::render () {
     }
 
     // Update particles
-    float dt = g_Time - static_cast<float> (m_time);
-    m_time = g_Time;
+    float dt = this->getContext ().getContext ().renderTime - static_cast<float> (m_time);
+    m_time = this->getContext ().getContext ().renderTime;
 
     if (dt > 0.0f) {
 	// Cap dt to prevent simulation instability
@@ -2173,7 +2173,7 @@ void CParticle::renderRope () {
     // UV scrolling: shift UV along the rope over time (1 UV cycle per second)
     float scrollOffset = 0.0f;
     if (m_ropeUVScrolling && usableLength > 0.0f) {
-	scrollOffset = std::fmod (static_cast<float> (g_Time), 10000.0f) * usableLength;
+	scrollOffset = std::fmod (this->getContext ().getContext ().renderTime, 10000.0f) * usableLength;
     }
 
     for (uint32_t s = 0; s < totalSubSegments; s++) {

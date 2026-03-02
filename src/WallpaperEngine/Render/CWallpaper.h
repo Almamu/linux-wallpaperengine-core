@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "frontends/project.h"
+#include "../../../include/frontends/project.h"
 
 #include "WallpaperEngine/Audio/AudioContext.h"
 

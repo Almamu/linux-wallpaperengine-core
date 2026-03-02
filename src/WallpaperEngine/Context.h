@@ -2,8 +2,11 @@
 
 #include "frontends/context.h"
 
-#include "Configuration.h"
+#include "WallpaperEngine/Data/Model/Project.h"
+#include "WallpaperEngine/Data/Model/Wallpaper.h"
+
 #include "Audio/AudioContext.h"
+#include "Configuration.h"
 #include "Render/RenderContext.h"
 
 namespace WallpaperEngine {
@@ -19,6 +22,8 @@ struct Context {
     wp_gl_proc_address* gl_proc_address;
     std::vector<Data::Model::ProjectUniquePtr> projects;
     bool isRunning;
-    double renderTime;
+    float renderTime;
+    float renderTimeLast;
+    float daytime;
 };
 }

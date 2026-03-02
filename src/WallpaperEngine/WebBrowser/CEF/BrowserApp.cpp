@@ -47,8 +47,6 @@ if (process_type.empty()) {
 }
 
 void BrowserApp::OnBeforeChildProcessLaunch (CefRefPtr<CefCommandLine> command_line) {
-    // add back any parameters we had before so the new process can load up everything needed
-    for (int i = 1; i < this->getApplication ().getContext ().getArgc (); i++) {
-	command_line->AppendArgument (this->getApplication ().getContext ().getArgv ()[i]);
-    }
+    // TODO: add some parameters to give more context on what to load
+
 }

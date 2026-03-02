@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "configuration.h"
+#include "../../include/frontends/configuration.h"
 
 #include "Steam/FileSystem/FileSystem.h"
 #include "WallpaperEngine/Configuration.h"

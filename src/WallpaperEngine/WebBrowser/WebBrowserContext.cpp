@@ -45,9 +45,7 @@ std::string generate_uuid_v4 () {
 
 WebBrowserContext::WebBrowserContext (Context& context) :
     m_context (context) {
-    CefMainArgs main_args (
-	this->getContext ().getArgc (), this->m_wallpaperApplication.getContext ().getArgv ()
-    );
+    CefMainArgs main_args (1, nullptr);
 
     // only care about app if the process is the main process
     // we should maybe use a better lib for handling command line arguments instead
@@ -72,14 +70,17 @@ WebBrowserContext::WebBrowserContext (Context& context) :
 	exit (exit_code);
     }
 
-    // Configurate Chromium
     CefSettings settings;
     std::string cache_path = (std::filesystem::temp_directory_path () / uuid::generate_uuid_v4 ()).string ();
     // CefString(&settings.locales_dir_path) = "OffScreenCEF/godot/locales";
     // CefString(&settings.resources_dir_path) = "OffScreenCEF/godot/";
     // CefString(&settings.framework_dir_path) = "OffScreenCEF/godot/";
     // CefString(&settings.cache_path) = "OffScreenCEF/godot/";
-    //  CefString(&settings.browser_subprocess_path) = "path/to/client"
+
+#ifdef WPENGINE_WEBHELPER_PATH
+    CefString(&settings.browser_subprocess_path) = WPENGINE_WEBHELPER_PATH;
+#endif
+
     cef_string_utf8_to_utf16 (cache_path.c_str (), cache_path.length (), &settings.root_cache_path);
     settings.windowless_rendering_enabled = true;
 #if defined(CEF_NO_SANDBOX)

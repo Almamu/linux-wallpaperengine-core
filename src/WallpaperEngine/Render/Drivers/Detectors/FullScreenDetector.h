@@ -1,6 +1,6 @@
 #pragma once
 
-#include "frontends/configuration.h"
+#include "../../../../../include/frontends/configuration.h"
 
 namespace WallpaperEngine::Render::Drivers::Detectors {
 class FullScreenDetector {

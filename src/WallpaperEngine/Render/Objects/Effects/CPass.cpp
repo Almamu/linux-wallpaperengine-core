@@ -29,9 +29,6 @@ using namespace WallpaperEngine::Render::Objects;
 using namespace WallpaperEngine::Render::Shaders::Variables;
 using namespace WallpaperEngine::Render::Objects::Effects;
 
-extern float g_Time;
-extern float g_Daytime;
-
 const TextureMap DEFAULT_BINDS = {};
 const ImageEffectPassOverride DEFAULT_OVERRIDE = {};
 
@@ -659,8 +656,8 @@ void CPass::setupUniforms () {
     // TODO: VALIDATE THAT G_COMPOSITECOLOR REALLY COMES FROM THIS ONE
     this->addUniform ("g_CompositeColor", renderable.getCompositeColor ());
     // add some external variables
-    this->addUniform ("g_Time", &g_Time);
-    this->addUniform ("g_Daytime", &g_Daytime);
+    this->addUniform ("g_Time", &this->getContext ().getContext ().renderTime);
+    this->addUniform ("g_Daytime", &this->getContext ().getContext ().daytime);
     // add model-view-projection matrix
     this->addUniform ("g_ModelViewProjectionMatrixInverse", &this->m_modelViewProjectionMatrixInverse);
     this->addUniform ("g_ModelViewProjectionMatrix", &this->m_modelViewProjectionMatrix);

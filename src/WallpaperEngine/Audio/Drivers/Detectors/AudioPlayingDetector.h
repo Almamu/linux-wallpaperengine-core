@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "frontends/configuration.h"
+#include "../../../../../include/frontends/configuration.h"
 
 #include "WallpaperEngine/Render/Drivers/Detectors/FullScreenDetector.h"
 
