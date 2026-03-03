@@ -253,7 +253,7 @@ std::unique_ptr<CWallpaper> CWallpaper::fromWallpaper (
 
     if (wallpaper.is<Web> ()) {
 	return std::make_unique<WallpaperEngine::Render::Wallpapers::CWeb> (
-	    wallpaper, context, audioContext, *browserContext, mouseInput
+	    wallpaper, context, audioContext, mouseInput
 	);
     }
 

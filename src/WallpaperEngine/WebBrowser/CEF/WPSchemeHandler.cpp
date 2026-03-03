@@ -9,8 +9,8 @@
 
 using namespace WallpaperEngine::WebBrowser::CEF;
 
-WPSchemeHandler::WPSchemeHandler (const Project& project) :
-    m_project (project), m_assetLoader (*this->m_project.assetLocator) { }
+WPSchemeHandler::WPSchemeHandler (const AssetLocator& locator) :
+    m_assetLoader (locator) { }
 
 bool WPSchemeHandler::Open (CefRefPtr<CefRequest> request, bool& handle_request, CefRefPtr<CefCallback> callback) {
     DCHECK (!CefCurrentlyOn (TID_UI) && !CefCurrentlyOn (TID_IO));

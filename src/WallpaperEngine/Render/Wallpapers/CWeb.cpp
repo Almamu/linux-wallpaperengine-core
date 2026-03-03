@@ -9,6 +9,8 @@
 #include "WallpaperEngine/Data/Model/Project.h"
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
 #include "WallpaperEngine/Input/MouseClickStatus.h"
+#include "WallpaperEngine/Utils/UUID.h"
+#include "WallpaperEngine/WebBrowser/CEF/BrowserApp.h"
 #include "include/cef_app.h"
 
 using namespace WallpaperEngine::Render;
@@ -18,11 +20,40 @@ using namespace WallpaperEngine::WebBrowser;
 using namespace WallpaperEngine::WebBrowser::CEF;
 
 CWeb::CWeb (
-    const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext, WebBrowserContext& browserContext,
+    const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
     wp_mouse_input* mouseInput
-) : CWallpaper (wallpaper, context, audioContext, mouseInput), m_browserContext (browserContext) {
+) : CWallpaper (wallpaper, context, audioContext, mouseInput) {
+    const CefMainArgs main_args;
     // setup framebuffers
     this->setupFramebuffers ();
+
+    this->m_browserApplication = new CEF::BrowserApp (
+        context.getContext ().config->assets_dir,
+        "",
+        this->getAssetLocator ()
+    );
+
+    // this blocks for anything not-main-thread
+    CefExecuteProcess (main_args, this->m_browserApplication, nullptr);
+
+    CefSettings settings;
+    const std::string cache_path = (std::filesystem::temp_directory_path () / WallpaperEngine::Utils::UUID::UUIDv4 ()).string ();
+
+#ifdef WPENGINE_WEBHELPER_PATH
+    CefString(&settings.browser_subprocess_path) = WPENGINE_WEBHELPER_PATH;
+#endif
+
+    cef_string_utf8_to_utf16 (cache_path.c_str (), cache_path.length (), &settings.root_cache_path);
+    settings.windowless_rendering_enabled = true;
+#if defined(CEF_NO_SANDBOX)
+    settings.no_sandbox = true;
+#endif
+
+    // spawns two new processess
+
+    if (!CefInitialize (main_args, settings, this->m_browserApplication, nullptr)) {
+	sLog.exception ("CefInitialize: failed");
+    }
 
     CefWindowInfo window_info;
     window_info.SetAsWindowless (0);

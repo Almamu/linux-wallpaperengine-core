@@ -17,6 +17,7 @@
 
 #include "WallpaperEngine/Data/Model/Wallpaper.h"
 #include "WallpaperEngine/Input/MouseClickStatus.h"
+#include "include/cef_app.h"
 
 namespace WallpaperEngine::WebBrowser::CEF {
 class RenderHandler;
@@ -27,7 +28,6 @@ class CWeb : public CWallpaper {
 public:
     CWeb (
 	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-	WallpaperEngine::WebBrowser::WebBrowserContext& browserContext,
 	wp_mouse_input* mouseInput
     );
     ~CWeb () override;
@@ -45,7 +45,7 @@ protected:
     friend class CWallpaper;
 
 private:
-    WallpaperEngine::WebBrowser::WebBrowserContext& m_browserContext;
+    CefRefPtr<CefApp> m_browserApplication = nullptr;
     CefRefPtr<CefBrowser> m_browser = nullptr;
     CefRefPtr<WallpaperEngine::WebBrowser::CEF::BrowserClient> m_client = nullptr;
     WallpaperEngine::WebBrowser::CEF::RenderHandler* m_renderHandler = nullptr;

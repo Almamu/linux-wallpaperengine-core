@@ -146,9 +146,7 @@ endif()
 if(DEMOMODE)
     set(DEMOMODE_SOURCES
         src/recording.cpp
-        src/recording.h
-            src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp
-            src/WallpaperEngine/WebBrowser/WebBrowserHelper.h)
+        src/recording.h)
     message(WARNING "Enabling demo mode will automatically record 5 seconds and stop the software. This is used internally to produce the video seen on the website as a sort of status report")
 endif()
 
@@ -311,8 +309,6 @@ set(COMMON_SOURCES
     src/WallpaperEngine/WebBrowser/CEF/WPSchemeHandlerFactory.h
     src/WallpaperEngine/WebBrowser/CEF/WPSchemeHandler.cpp
     src/WallpaperEngine/WebBrowser/CEF/WPSchemeHandler.h
-    src/WallpaperEngine/WebBrowser/WebBrowserContext.cpp
-    src/WallpaperEngine/WebBrowser/WebBrowserContext.h
 
     src/WallpaperEngine/Data/Assets/Types.h
     src/WallpaperEngine/Data/Assets/Texture.h
@@ -367,6 +363,9 @@ set(COMMON_SOURCES
     src/WallpaperEngine/VideoPlayback/MPV/MemoryStreamProtocol.cpp
     src/WallpaperEngine/VideoPlayback/MPV/MemoryStreamProtocol.h
 
+    src/WallpaperEngine/Utils/UUID.h
+    src/WallpaperEngine/Utils/UUID.cpp
+
     src/WallpaperEngine/Configuration.h
     src/WallpaperEngine/Context.h
     src/WallpaperEngine/Scripting/ScriptEngine.h
@@ -397,8 +396,8 @@ add_library(
     ${DEMOMODE_SOURCES})
 
 add_executable(linux-wallpaperengine-webhelper
-        src/WallpaperEngine/WebBrowser/WebBrowserHelper.h
-        src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp)
+    src/WallpaperEngine/Utils/UUID.cpp
+    src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp)
 
 set(WPENGINE_INSTALL_LIBDIR "lib/${PROJECT_NAME}")
 

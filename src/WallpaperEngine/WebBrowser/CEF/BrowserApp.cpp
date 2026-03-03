@@ -1,20 +1,20 @@
 #include "BrowserApp.h"
-#include "WallpaperEngine/Logging/Log.h"
+#include "WallpaperEngine/Utils/UUID.h"
 
 using namespace WallpaperEngine::WebBrowser::CEF;
 
-BrowserApp::BrowserApp (Context& context) :
-    SubprocessApp (context) { }
+BrowserApp::BrowserApp (
+    const std::filesystem::path& assetDir, const std::filesystem::path& backgroundDir, const Assets::AssetLocator& locator) :
+    SubprocessApp (Utils::UUID::UUIDv4 (), locator),
+    m_assetDir (assetDir), m_backgroundDir (backgroundDir) {
+}
 
 CefRefPtr<CefBrowserProcessHandler> BrowserApp::GetBrowserProcessHandler () { return this; }
 
 void BrowserApp::OnContextInitialized () {
-    // register all the needed schemes, "wp" + the background id is going to be our scheme
-    for (const auto& [workshopId, factory] : this->getHandlerFactories ()) {
-	CefRegisterSchemeHandlerFactory (
-	    WPSchemeHandlerFactory::generateSchemeName (workshopId), static_cast<const char*> (nullptr), factory
-	);
-    }
+    CefRegisterSchemeHandlerFactory (
+	WPSchemeHandlerFactory::generateSchemeName (this->getUUID ()), static_cast<const char*> (nullptr), this->getHandlerFactory ()
+    );
 }
 
 void BrowserApp::OnBeforeCommandLineProcessing (const CefString& process_type, CefRefPtr<CefCommandLine> command_line) {
@@ -48,5 +48,7 @@ if (process_type.empty()) {
 
 void BrowserApp::OnBeforeChildProcessLaunch (CefRefPtr<CefCommandLine> command_line) {
     // TODO: add some parameters to give more context on what to load
-
+    command_line->AppendSwitchWithValue ("uuid", this->getUUID ());
+    command_line->AppendSwitchWithValue ("assets-dir", this->m_assetDir.c_str ());
+    command_line->AppendSwitchWithValue ("background-dir", this->m_backgroundDir.c_str ());
 }

@@ -2,7 +2,6 @@
 
 #include "SubprocessApp.h"
 #include "WPSchemeHandlerFactory.h"
-#include "WallpaperEngine/WebBrowser/WebBrowserContext.h"
 #include "include/cef_app.h"
 
 namespace WallpaperEngine::Application {
@@ -15,7 +14,8 @@ namespace WallpaperEngine::WebBrowser::CEF {
  */
 class BrowserApp : public SubprocessApp, public CefBrowserProcessHandler {
 public:
-    explicit BrowserApp (Context& context);
+    explicit BrowserApp (
+	const std::filesystem::path& assetDir, const std::filesystem::path& backgroundDir, const Assets::AssetLocator& locator);
 
     [[nodiscard]] CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler () override;
 
@@ -24,6 +24,9 @@ public:
     void OnBeforeChildProcessLaunch (CefRefPtr<CefCommandLine> command_line) override;
 
 private:
+    std::filesystem::path m_assetDir;
+    std::filesystem::path m_backgroundDir;
+
     IMPLEMENT_REFCOUNTING (BrowserApp);
     DISALLOW_COPY_AND_ASSIGN (BrowserApp);
 };
