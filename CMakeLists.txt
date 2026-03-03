@@ -38,11 +38,15 @@ set(QJS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 set(ENABLE_OPT OFF)
 
+# glslang build
+set(BUILD_SHARED_LIBS ON)
+
 # configure spirv to not output any files
 # just build as static library
 set(SPIRV_CROSS_FORCE_PIC ON)
 set(SPIRV_CROSS_CLI OFF)
 set(SPIRV_CROSS_SKIP_INSTALL ON)
+set(SPIRV_CROSS_ENABLE_TESTS OFF)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -51,7 +55,6 @@ set(KISSFFT_TEST OFF)
 set(KISSFFT_TOOLS OFF)
 set(KISSFFT_PKGCONFIG OFF)
 set(KISSFFT_STATIC ON)
-set(KISSFFT_PKGCONFIG OFF)
 
 # Download CEF of specified version for current platform
 # Specify the CEF distribution version.
