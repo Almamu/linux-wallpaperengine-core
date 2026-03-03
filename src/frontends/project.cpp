@@ -119,10 +119,11 @@ wp_project* wp_project_load (wp_context* context, wp_mouse_input* mouse_input, c
 
         auto contextPtr = static_cast<WallpaperEngine::Context*> (context);
         auto locator = wp_setup_asset_locator (contextPtr->config, project);
+        auto json = JSON::parse (locator->readString ("project.json"));
         auto it = contextPtr->projects.insert (
             contextPtr->projects.end (),
             WallpaperEngine::Data::Parsers::ProjectParser::parse (
-                JSON::parse (locator->readString ("project.json")), std::move (locator)
+                json, std::move (locator)
             )
         );
         auto result = new WallpaperEngine::LoadedProject {
