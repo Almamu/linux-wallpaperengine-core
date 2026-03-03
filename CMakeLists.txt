@@ -42,14 +42,16 @@ set(ENABLE_OPT OFF)
 # just build as static library
 set(SPIRV_CROSS_FORCE_PIC ON)
 set(SPIRV_CROSS_CLI OFF)
+set(SPIRV_CROSS_SKIP_INSTALL ON)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# configure kissfft build to static link
+# configure kissfft build to static link and no files generation
 set(KISSFFT_TEST OFF)
 set(KISSFFT_TOOLS OFF)
 set(KISSFFT_PKGCONFIG OFF)
 set(KISSFFT_STATIC ON)
+set(KISSFFT_PKGCONFIG OFF)
 
 # Download CEF of specified version for current platform
 # Specify the CEF distribution version.
@@ -512,8 +514,10 @@ REPLACED_SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
 
 # set some install parameters if not in debug mode
 install(TARGETS linux-wallpaperengine-core linux-wallpaperengine-webhelper
-        LIBRARY DESTINATION ${WPENGINE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${WPENGINE_INSTALL_BINDIR})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/linux-wallpaperengine)
 
 install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION ${WPENGINE_INSTALL_LIBDIR}
         FILES_MATCHING PATTERN "*.so*" PATTERN "*.bin" PATTERN "*.dat" PATTERN "*.pak" PATTERN "locales/*")
