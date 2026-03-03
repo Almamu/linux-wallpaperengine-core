@@ -399,13 +399,14 @@ add_executable(linux-wallpaperengine-webhelper
     src/WallpaperEngine/Utils/UUID.cpp
     src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp)
 
+set(WPENGINE_INSTALL_BINDIR "bin")
 set(WPENGINE_INSTALL_LIBDIR "lib/${PROJECT_NAME}")
 
 target_link_libraries(linux-wallpaperengine-webhelper PUBLIC
     linux-wallpaperengine-core)
 
 target_compile_definitions(linux-wallpaperengine-core PRIVATE
-    WPENGINE_WEBHELPER_PATH="${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_LIBDIR}/linux-wallpaperengine-webhelper")
+    WPENGINE_WEBHELPER_PATH="${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_BINDIR}/linux-wallpaperengine-webhelper")
 
 set_target_properties(linux-wallpaperengine-webhelper PROPERTIES
     SKIP_BUILD_RPATH FALSE
@@ -503,7 +504,7 @@ REPLACED_SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
 # set some install parameters if not in debug mode
 install(TARGETS linux-wallpaperengine-core linux-wallpaperengine-webhelper
         LIBRARY DESTINATION ${WPENGINE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${WPENGINE_INSTALL_LIBDIR})
+        RUNTIME DESTINATION ${WPENGINE_INSTALL_BINDIR})
 
 install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION ${WPENGINE_INSTALL_LIBDIR}
         FILES_MATCHING PATTERN "*.so*" PATTERN "*.bin" PATTERN "*.dat" PATTERN "*.pak" PATTERN "locales/*")
