@@ -2,7 +2,7 @@
 #include "WallpaperEngine/Audio/Drivers/AudioDriver.h"
 
 namespace WallpaperEngine::Audio {
-AudioContext::AudioContext (std::unique_ptr<Drivers::AudioDriver> driver) : m_driver (std::move(driver)) { }
+AudioContext::AudioContext (std::unique_ptr<Drivers::AudioDriver> driver) : m_driver (std::move (driver)) { }
 
 int AudioContext::addStream (AudioStream* stream) const { return this->m_driver->addStream (stream); }
 void AudioContext::removeStream (int streamId) const { this->m_driver->removeStream (streamId); }

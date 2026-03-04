@@ -2,7 +2,6 @@
 
 #include <string>
 
-namespace WallpaperEngine::Utils::UUID
-{
-    std::string UUIDv4 ();
+namespace WallpaperEngine::Utils::UUID {
+std::string UUIDv4 ();
 }

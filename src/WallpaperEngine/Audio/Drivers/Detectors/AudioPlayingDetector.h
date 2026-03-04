@@ -8,44 +8,43 @@
 
 namespace WallpaperEngine {
 namespace Application {
-    class ApplicationContext;
+	class ApplicationContext;
 }
 
 namespace Audio::Drivers::Detectors {
-    /**
-     * Base class for any implementation of audio playing detection
-     */
-    class AudioPlayingDetector {
-    public:
-	AudioPlayingDetector (
-	    wp_mute_check& source,
-	    std::unique_ptr<Render::Drivers::Detectors::FullScreenDetector> fullscreenDetector
-	);
-
-	virtual ~AudioPlayingDetector () = default;
-
 	/**
-	 * @return If any kind of sound is currently playing on the default audio device
+	 * Base class for any implementation of audio playing detection
 	 */
-	[[nodiscard]] bool anythingPlaying () const;
+	class AudioPlayingDetector {
+	public:
+		AudioPlayingDetector (
+			wp_mute_check& source, std::unique_ptr<Render::Drivers::Detectors::FullScreenDetector> fullscreenDetector
+		);
 
-	/**
-	 * Checks if any audio is playing and updates state accordingly
-	 */
-	virtual void update ();
+		virtual ~AudioPlayingDetector () = default;
 
-    protected:
-	/**
-	 * @return The fullscreen detector used
-	 */
-	[[nodiscard]] const Render::Drivers::Detectors::FullScreenDetector& getFullscreenDetector () const;
+		/**
+		 * @return If any kind of sound is currently playing on the default audio device
+		 */
+		[[nodiscard]] bool anythingPlaying () const;
 
-    private:
-        wp_mute_check& m_source;
+		/**
+		 * Checks if any audio is playing and updates state accordingly
+		 */
+		virtual void update ();
 
-	bool m_isPlaying = false;
+	protected:
+		/**
+		 * @return The fullscreen detector used
+		 */
+		[[nodiscard]] const Render::Drivers::Detectors::FullScreenDetector& getFullscreenDetector () const;
 
-	std::unique_ptr<Render::Drivers::Detectors::FullScreenDetector> m_fullscreenDetector;
-    };
+	private:
+		wp_mute_check& m_source;
+
+		bool m_isPlaying = false;
+
+		std::unique_ptr<Render::Drivers::Detectors::FullScreenDetector> m_fullscreenDetector;
+	};
 } // namespace Audio::Drivers::Detectors
 } // namespace WallpaperEngine

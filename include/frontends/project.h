@@ -9,31 +9,31 @@
 typedef void wp_project;
 
 enum wp_mouse_input_button {
-    WP_MOUSE_INPUT_BUTTON_LEFT = 1,
-    WP_MOUSE_INPUT_BUTTON_RIGHT = 2,
-    WP_MOUSE_INPUT_BUTTON_MIDDLE = 4,
+	WP_MOUSE_INPUT_BUTTON_LEFT = 1,
+	WP_MOUSE_INPUT_BUTTON_RIGHT = 2,
+	WP_MOUSE_INPUT_BUTTON_MIDDLE = 4,
 };
 
 /**
  * Provides callbacks to get mouse position
  */
 struct wp_mouse_input {
-    /**
-     * Pointer to user-defined data that will be passed to the callbacks
-     */
-    void* user_parameter;
-    /**
-     * Callback that returns the current mouse's x position on the given background
-     */
-    double (*get_x)(void* user_parameter);
-    /**
-     * Callback that returns the current mouse's y position on the given background
-     */
-    double (*get_y)(void* user_parameter);
-    /**
-     * Callback that returns the current mouse's button state
-     */
-    int (*is_pressed)(void* user_parameter, int button);
+	/**
+	 * Pointer to user-defined data that will be passed to the callbacks
+	 */
+	void* user_parameter;
+	/**
+	 * Callback that returns the current mouse's x position on the given background
+	 */
+	double (*get_x) (void* user_parameter);
+	/**
+	 * Callback that returns the current mouse's y position on the given background
+	 */
+	double (*get_y) (void* user_parameter);
+	/**
+	 * Callback that returns the current mouse's button state
+	 */
+	int (*is_pressed) (void* user_parameter, int button);
 };
 
 /**

@@ -16,13 +16,13 @@ using namespace WallpaperEngine::Data::Parsers;
 TextureCache::TextureCache () { }
 
 std::shared_ptr<const TextureProvider> TextureCache::resolve (const std::string& filename) {
-    if (const auto found = this->m_textureCache.find (filename); found != this->m_textureCache.end ()) {
-	return found->second;
-    }
+	if (const auto found = this->m_textureCache.find (filename); found != this->m_textureCache.end ()) {
+		return found->second;
+	}
 
-    throw Assets::AssetLoadException ("Cannot find file", filename, std::error_code ());
+	throw Assets::AssetLoadException ("Cannot find file", filename, std::error_code ());
 }
 
 void TextureCache::store (const std::string& name, std::shared_ptr<const TextureProvider> texture) {
-    this->m_textureCache.insert_or_assign (name, texture);
+	this->m_textureCache.insert_or_assign (name, texture);
 }

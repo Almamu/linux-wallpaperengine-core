@@ -12,15 +12,15 @@ typedef void wp_context;
  * Provides callbacks to get opengl methods to call by the renderer
  */
 struct wp_gl_proc_address {
-    /**
-     * Pointer to user-defined data that will be passed to the callbacks
-     */
-    void* user_parameter;
+	/**
+	 * Pointer to user-defined data that will be passed to the callbacks
+	 */
+	void* user_parameter;
 
-    /**
-     * Requests the address of the specified opengl function
-     */
-    void* (*get_proc_address)(void* user_parameter, const char* name);
+	/**
+	 * Requests the address of the specified opengl function
+	 */
+	void* (*get_proc_address) (void* user_parameter, const char* name);
 };
 
 /**

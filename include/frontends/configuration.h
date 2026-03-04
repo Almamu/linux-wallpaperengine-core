@@ -11,26 +11,26 @@ typedef void wp_configuration;
  * (only called when enabled)
  */
 struct wp_mute_check {
-    /**
-     * Pointer to user-defined data that will be passed to the callbacks
-     */
-    void* user_parameter;
+	/**
+	 * Pointer to user-defined data that will be passed to the callbacks
+	 */
+	void* user_parameter;
 
-    bool (*is_muted)(void* user_parameter);
+	bool (*is_muted) (void* user_parameter);
 };
 
 /**
  * Pointers to different functions to check if rendering should be paused
  */
 struct wp_rendering_pause_check {
-    /**
-     * Pointer to user-defined data that will be passed to the callbacks
-     */
-    void* user_parameter;
-    /**
-     * Callback that should return if something is fullscreen or not, used for pausing
-     */
-    bool (*is_paused)(void* user_parameter);
+	/**
+	 * Pointer to user-defined data that will be passed to the callbacks
+	 */
+	void* user_parameter;
+	/**
+	 * Callback that should return if something is fullscreen or not, used for pausing
+	 */
+	bool (*is_paused) (void* user_parameter);
 };
 
 /**

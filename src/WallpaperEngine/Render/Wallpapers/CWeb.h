@@ -26,37 +26,34 @@ class RenderHandler;
 namespace WallpaperEngine::Render::Wallpapers {
 class CWeb : public CWallpaper {
 public:
-    CWeb (
-	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-	wp_mouse_input* mouseInput
-    );
-    ~CWeb () override;
-    [[nodiscard]] int getWidth () const override { return this->m_width; }
+	CWeb (const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext, wp_mouse_input* mouseInput);
+	~CWeb () override;
+	[[nodiscard]] int getWidth () const override { return this->m_width; }
 
-    [[nodiscard]] int getHeight () const override { return this->m_height; }
+	[[nodiscard]] int getHeight () const override { return this->m_height; }
 
-    void setSize (int width, int height);
+	void setSize (int width, int height);
 
 protected:
-    void renderFrame () override;
-    void updateMouse ();
-    const Web& getWeb () const { return *this->getWallpaperData ().as<Web> (); }
+	void renderFrame () override;
+	void updateMouse ();
+	const Web& getWeb () const { return *this->getWallpaperData ().as<Web> (); }
 
-    friend class CWallpaper;
+	friend class CWallpaper;
 
 private:
-    CefRefPtr<CefApp> m_browserApplication = nullptr;
-    CefRefPtr<CefBrowser> m_browser = nullptr;
-    CefRefPtr<WallpaperEngine::WebBrowser::CEF::BrowserClient> m_client = nullptr;
-    WallpaperEngine::WebBrowser::CEF::RenderHandler* m_renderHandler = nullptr;
+	CefRefPtr<CefApp> m_browserApplication = nullptr;
+	CefRefPtr<CefBrowser> m_browser = nullptr;
+	CefRefPtr<WallpaperEngine::WebBrowser::CEF::BrowserClient> m_client = nullptr;
+	WallpaperEngine::WebBrowser::CEF::RenderHandler* m_renderHandler = nullptr;
 
-    int m_width = 16;
-    int m_height = 17;
+	int m_width = 16;
+	int m_height = 17;
 
-    WallpaperEngine::Input::MouseClickStatus m_leftClick = Input::Released;
-    WallpaperEngine::Input::MouseClickStatus m_rightClick = Input::Released;
+	WallpaperEngine::Input::MouseClickStatus m_leftClick = Input::Released;
+	WallpaperEngine::Input::MouseClickStatus m_rightClick = Input::Released;
 
-    glm::vec2 m_mousePosition = {};
-    glm::vec2 m_mousePositionLast = {};
+	glm::vec2 m_mousePosition = {};
+	glm::vec2 m_mousePositionLast = {};
 };
 }
