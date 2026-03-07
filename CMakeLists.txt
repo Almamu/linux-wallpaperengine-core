@@ -36,26 +36,25 @@ find_package(PulseAudio REQUIRED)
 
 set(QJS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-set(ENABLE_OPT OFF)
+option(ENABLE_OPT OFF)
 
 # glslang build
-set(BUILD_SHARED_LIBS OFF)
+option(BUILD_SHARED_LIBS OFF)
 
 # configure spirv to not output any files
 # just build as static library
-set(SPIRV_CROSS_FORCE_PIC ON)
-set(SPIRV_CROSS_CLI OFF)
-set(SPIRV_CROSS_SKIP_INSTALL ON)
-set(SPIRV_CROSS_ENABLE_TESTS OFF)
-
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+option(SPIRV_CROSS_FORCE_PIC ON)
+option(SPIRV_CROSS_CLI OFF)
+option(SPIRV_CROSS_SKIP_INSTALL ON)
+option(SPIRV_CROSS_ENABLE_TESTS OFF)
+option(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # configure kissfft build to static link and no files generation
-set(KISSFFT_TEST OFF)
-set(KISSFFT_TOOLS OFF)
-set(KISSFFT_PKGCONFIG OFF)
-set(KISSFFT_STATIC ON)
-set(KISSFFT_ENABLE_INSTALL OFF)
+option(KISSFFT_TEST OFF)
+option(KISSFFT_TOOLS OFF)
+option(KISSFFT_PKGCONFIG OFF)
+option(KISSFFT_STATIC ON)
+option(KISSFFT_ENABLE_INSTALL OFF)
 
 # Download CEF of specified version for current platform
 # Specify the CEF distribution version.
