@@ -40,6 +40,9 @@ option(ENABLE_OPT OFF)
 
 # glslang build
 option(BUILD_SHARED_LIBS OFF)
+option(ENABLE_GLSLANG_BINARIES OFF)
+option(GLSLANG_TESTS OFF)
+option(GLSLANG_ENABLE_INSTALL OFF)
 
 # configure spirv to not output any files
 # just build as static library
