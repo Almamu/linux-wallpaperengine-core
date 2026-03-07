@@ -50,7 +50,8 @@ option(ENABLE_HLSL OFF)
 # just build as static library
 option(SPIRV_CROSS_FORCE_PIC ON)
 option(SPIRV_CROSS_CLI OFF)
-option(SPIRV_CROSS_SKIP_INSTALL ON)
+# need to force this because otherwise it wont work
+set(SPIRV_CROSS_SKIP_INSTALL ON CACHE BOOL "Skips installation targets." FORCE)
 option(SPIRV_CROSS_ENABLE_TESTS OFF)
 option(SPIRV_CROSS_ENABLE_HLSL OFF)
 option(SPIRV_CROSS_ENABLE_MSL OFF)
