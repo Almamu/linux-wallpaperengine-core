@@ -55,6 +55,7 @@ set(KISSFFT_TEST OFF)
 set(KISSFFT_TOOLS OFF)
 set(KISSFFT_PKGCONFIG OFF)
 set(KISSFFT_STATIC ON)
+set(KISSFFT_ENABLE_INSTALL OFF)
 
 # Download CEF of specified version for current platform
 # Specify the CEF distribution version.
@@ -149,7 +150,7 @@ set(TARGET_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output)
 add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
 add_subdirectory(src/External/glslang-WallpaperEngine glslang)
 add_subdirectory(src/External/SPIRV-Cross-WallpaperEngine spirv-cross)
-add_subdirectory(src/External/kissfft kissfft)
+add_subdirectory(src/External/kissfft-WallpaperEngine kissfft)
 add_subdirectory(src/External/argparse argparse)
 add_subdirectory(src/External/quickjs quickjs)
 
