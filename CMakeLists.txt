@@ -189,13 +189,15 @@ include_directories(
     ${CMAKE_SOURCE_DIR})
 
 set(COMMON_SOURCES
-    include/frontends/project.h
     include/frontends/configuration.h
     src/frontends/configuration.cpp
+    include/frontends/project.h
     src/frontends/project.cpp
     include/frontends/context.h
     src/frontends/context.cpp
     include/frontends/pulseaudio.h
+    include/frontends/render.h
+    src/frontends/render.cpp
 
     src/External/MimeTypes/MimeTypes.cpp
     src/External/MimeTypes/MimeTypes.h

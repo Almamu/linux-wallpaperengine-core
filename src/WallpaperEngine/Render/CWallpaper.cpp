@@ -179,7 +179,7 @@ void CWallpaper::setupShaders () {
 	this->a_TexCoord = glGetAttribLocation (this->m_shader, "a_TexCoord");
 }
 
-void CWallpaper::setDestinationFramebuffer (GLuint framebuffer) { this->m_destFramebuffer = framebuffer; }
+void CWallpaper::setDestinationFramebuffer (GLuint framebuffer) const { this->m_destFramebuffer = framebuffer; }
 
 void CWallpaper::render () {
 #if !NDEBUG
@@ -231,8 +231,7 @@ glm::dvec2 CWallpaper::getLiveMousePosition () const {
 wp_mouse_input* CWallpaper::getMouseInputHandler () const { return this->m_mouseInput; }
 
 std::unique_ptr<CWallpaper> CWallpaper::fromWallpaper (
-	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-	WebBrowser::WebBrowserContext* browserContext, wp_mouse_input* mouseInput
+	const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext, wp_mouse_input* mouseInput
 ) {
 	if (wallpaper.is<Scene> ()) {
 		return std::make_unique<WallpaperEngine::Render::Wallpapers::CScene> (

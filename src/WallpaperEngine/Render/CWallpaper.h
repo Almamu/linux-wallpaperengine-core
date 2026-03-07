@@ -101,7 +101,7 @@ public:
 	 *
 	 * @param framebuffer
 	 */
-	void setDestinationFramebuffer (GLuint framebuffer);
+	void setDestinationFramebuffer (GLuint framebuffer) const;
 
 	/**
 	 * @return The width of this wallpaper
@@ -119,14 +119,12 @@ public:
 	 * @param wallpaper
 	 * @param context
 	 * @param audioContext
-	 * @param browserContext
 	 * @param mouseInput
 	 *
 	 * @return
 	 */
 	static std::unique_ptr<CWallpaper> fromWallpaper (
-		const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext,
-		WebBrowser::WebBrowserContext* browserContext, wp_mouse_input* mouseInput
+		const Wallpaper& wallpaper, RenderContext& context, AudioContext& audioContext, wp_mouse_input* mouseInput
 	);
 
 protected:
@@ -166,7 +164,7 @@ private:
 	GLint a_Position = GL_NONE;
 	GLint a_TexCoord = GL_NONE;
 	/** The framebuffer to draw the background to */
-	GLuint m_destFramebuffer = GL_NONE;
+	mutable GLuint m_destFramebuffer = GL_NONE;
 	/** Setups OpenGL's shaders for this wallpaper backbuffer */
 	void setupShaders ();
 	/** List of FBOs registered for this wallpaper */

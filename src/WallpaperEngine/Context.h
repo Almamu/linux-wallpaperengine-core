@@ -13,6 +13,7 @@ namespace WallpaperEngine {
 struct LoadedProject {
 	std::vector<Data::Model::ProjectUniquePtr>::const_iterator ref;
 	std::unique_ptr<RenderContext> render;
+	Context& context;
 };
 
 struct Context {

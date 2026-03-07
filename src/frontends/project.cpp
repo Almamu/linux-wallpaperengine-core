@@ -127,14 +127,11 @@ wp_project* wp_project_load (wp_context* context, wp_mouse_input* mouse_input, c
 		auto result = new WallpaperEngine::LoadedProject {
 			.ref = it,
 			.render = std::make_unique<RenderContext> (*contextPtr),
+			.context = *contextPtr,
 		};
 
 		result->render->setWallpaper (
-			CWallpaper::fromWallpaper (
-				*(*it)->wallpaper, *result->render, *contextPtr->audio,
-				// TODO: PROVIDE BROWSER CONTEXT HERE IF NEEDED
-				nullptr, mouse_input
-			)
+			CWallpaper::fromWallpaper (*(*it)->wallpaper, *result->render, *contextPtr->audio, mouse_input)
 		);
 
 		return result;
@@ -152,4 +149,16 @@ wp_project* wp_project_load_id (wp_context* context, wp_mouse_input* mouse_input
 
 wp_project* wp_project_load_folder (wp_context* context, wp_mouse_input* mouse_input, const char* folder) {
 	return wp_project_load (context, mouse_input, std::filesystem::path (folder));
+}
+
+int wp_project_get_width (wp_project* project) {
+	return static_cast<WallpaperEngine::LoadedProject*> (project)->render->getWallpaper ().getWidth ();
+}
+
+int wp_project_get_height (wp_project* project) {
+	return static_cast<WallpaperEngine::LoadedProject*> (project)->render->getWallpaper ().getHeight ();
+}
+
+void wp_project_set_output_framebuffer (wp_project* project, GLuint fb) {
+	static_cast<WallpaperEngine::LoadedProject*> (project)->render->getWallpaper ().setDestinationFramebuffer (fb);
 }
