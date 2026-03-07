@@ -71,7 +71,7 @@ option(KISSFFT_ENABLE_INSTALL OFF)
 
 # Download CEF of specified version for current platform
 # Specify the CEF distribution version.
-set(CEF_VERSION "135.0.17+gcbc1c5b+chromium-135.0.7049.52")
+set(CEF_VERSION "145.0.28+g51162e8+chromium-145.0.7632.160")
 # CEF_DISTRIBUTION_TYPE default value should be different based on the type of build
 # debug builds should use standard versions
 # while release version can do with the minimal version
@@ -528,7 +528,7 @@ set_target_properties(linux-wallpaperengine-core PROPERTIES
 
 add_dependencies(linux-wallpaperengine-core libcef_dll_wrapper glslang spirv-cross-core spirv-cross-glsl)
 # custom version of cef's SET_EXECUTABLE_TARGET_PROPERTIES that fixes C files being compiled with the wrong parameters
-REPLACED_SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
+SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
 
 # set some install parameters if not in debug mode
 install(TARGETS linux-wallpaperengine-core linux-wallpaperengine-webhelper
