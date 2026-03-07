@@ -47,7 +47,8 @@ option(SPIRV_CROSS_FORCE_PIC ON)
 option(SPIRV_CROSS_CLI OFF)
 option(SPIRV_CROSS_SKIP_INSTALL ON)
 option(SPIRV_CROSS_ENABLE_TESTS OFF)
-option(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # configure kissfft build to static link and no files generation
 option(KISSFFT_TEST OFF)
