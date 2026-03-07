@@ -39,7 +39,7 @@ set(QJS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(ENABLE_OPT OFF)
 
 # glslang build
-set(BUILD_SHARED_LIBS ON)
+set(BUILD_SHARED_LIBS OFF)
 
 # configure spirv to not output any files
 # just build as static library
