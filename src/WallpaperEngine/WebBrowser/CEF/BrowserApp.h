@@ -15,7 +15,7 @@ namespace WallpaperEngine::WebBrowser::CEF {
 class BrowserApp : public SubprocessApp, public CefBrowserProcessHandler {
 public:
 	explicit BrowserApp (
-		const std::filesystem::path& assetDir, const std::filesystem::path& backgroundDir,
+		std::filesystem::path  assetDir, std::filesystem::path  backgroundDir,
 		const Assets::AssetLocator& locator
 	);
 

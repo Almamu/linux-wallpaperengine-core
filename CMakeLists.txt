@@ -22,6 +22,8 @@ if(NOT ERRORONLY)
     set(ERRORONLY 0)
 endif()
 
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing")
 
 find_package(OpenGL REQUIRED)
@@ -428,25 +430,22 @@ add_executable(linux-wallpaperengine-webhelper
     src/WallpaperEngine/Utils/UUID.cpp
     src/WallpaperEngine/WebBrowser/WebBrowserHelper.cpp)
 
-set(WPENGINE_INSTALL_BINDIR "bin")
-set(WPENGINE_INSTALL_LIBDIR "lib/${PROJECT_NAME}")
-
 target_link_libraries(linux-wallpaperengine-webhelper PUBLIC
     linux-wallpaperengine-core)
 
 target_compile_definitions(linux-wallpaperengine-core PRIVATE
-    WPENGINE_WEBHELPER_PATH="${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_BINDIR}/linux-wallpaperengine-webhelper")
+    WPENGINE_WEBHELPER_PATH="${CMAKE_INSTALL_BINDIR}/linux-wallpaperengine-webhelper")
 
 set_target_properties(linux-wallpaperengine-webhelper PROPERTIES
     SKIP_BUILD_RPATH FALSE
     BUILD_WITH_INSTALL_RPATH FALSE
-    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_LIBDIR}"
+    INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}"
     INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 set_target_properties(linux-wallpaperengine-core PROPERTIES
     SKIP_BUILD_RPATH FALSE
     BUILD_WITH_INSTALL_RPATH FALSE
-    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${WPENGINE_INSTALL_LIBDIR}"
+    INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}"
     INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 target_link_libraries (linux-wallpaperengine-core PUBLIC
@@ -527,7 +526,6 @@ set_target_properties(linux-wallpaperengine-core PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${TARGET_OUTPUT_DIRECTORY})
 
 add_dependencies(linux-wallpaperengine-core libcef_dll_wrapper glslang spirv-cross-core spirv-cross-glsl)
-# custom version of cef's SET_EXECUTABLE_TARGET_PROPERTIES that fixes C files being compiled with the wrong parameters
 SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
 
 # set some install parameters if not in debug mode
