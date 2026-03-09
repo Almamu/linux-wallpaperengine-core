@@ -38,6 +38,9 @@ find_package(PulseAudio REQUIRED)
 
 option(ENABLE_OPT OFF)
 
+# quickjs build
+option(QJS_ENABLE_INSTALL OFF)
+
 # glslang build
 option(BUILD_SHARED_LIBS OFF)
 option(ENABLE_GLSLANG_BINARIES OFF)
@@ -164,7 +167,7 @@ add_subdirectory(src/External/glslang-WallpaperEngine glslang)
 add_subdirectory(src/External/SPIRV-Cross-WallpaperEngine spirv-cross)
 add_subdirectory(src/External/kissfft-WallpaperEngine kissfft)
 add_subdirectory(src/External/argparse argparse)
-add_subdirectory(src/External/quickjs quickjs)
+add_subdirectory(src/External/quickjs-WallpaperEngine quickjs)
 
 if(BUILD_TESTING)
     add_subdirectory(src/External/Catch2)
