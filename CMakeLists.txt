@@ -535,7 +535,7 @@ install(TARGETS linux-wallpaperengine-core linux-wallpaperengine-webhelper
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/linux-wallpaperengine)
 
-install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION ${WPENGINE_INSTALL_LIBDIR}
+install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION "${CMAKE_INSTALL_LIBDIR}/linux-wallpaperengine"
         FILES_MATCHING PATTERN "*.so*" PATTERN "*.bin" PATTERN "*.dat" PATTERN "*.pak" PATTERN "locales/*")
 
 install(DIRECTORY include/frontends/ DESTINATION include/${PROJECT_NAME})
