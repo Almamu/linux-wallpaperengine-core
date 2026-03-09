@@ -517,3 +517,19 @@ install(DIRECTORY ${TARGET_OUTPUT_DIRECTORY}/ DESTINATION "${CMAKE_INSTALL_LIBDI
         FILES_MATCHING PATTERN "*.so*" PATTERN "*.bin" PATTERN "*.dat" PATTERN "*.pak" PATTERN "locales/*")
 
 install(DIRECTORY include/frontends/ DESTINATION include/${PROJECT_NAME})
+
+# pkg-config generation
+if(NOT PROJECT_VERSION)
+    set(PROJECT_VERSION "0.0.1")
+endif()
+
+configure_file(
+    linux-wallpaperengine-core.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/linux-wallpaperengine-core.pc
+    @ONLY
+)
+
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/linux-wallpaperengine-core.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
