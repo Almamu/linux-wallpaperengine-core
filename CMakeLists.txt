@@ -36,8 +36,6 @@ find_package(LZ4 REQUIRED)
 find_package(FFMPEG REQUIRED)
 find_package(PulseAudio REQUIRED)
 
-set(QJS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
 option(ENABLE_OPT OFF)
 
 # glslang build
@@ -502,7 +500,7 @@ file(REMOVE "${CEF_BINARY_DIR}/libvulkan.so.1")
 set_target_properties(linux-wallpaperengine-core PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${TARGET_OUTPUT_DIRECTORY})
 
-add_dependencies(linux-wallpaperengine-core libcef_dll_wrapper glslang spirv-cross-core spirv-cross-glsl)
+add_dependencies(linux-wallpaperengine-core libcef_dll_wrapper glslang spirv-cross-core spirv-cross-glsl qjs)
 SET_EXECUTABLE_TARGET_PROPERTIES(linux-wallpaperengine-core)
 
 # set some install parameters if not in debug mode
