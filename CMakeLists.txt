@@ -187,6 +187,7 @@ ADD_LOGICAL_TARGET(libcef_lib "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
 PRINT_CEF_CONFIG()
 
 include_directories(
+    include
     src
     src/External/glslang-WallpaperEngine
     src/External/SPIRV-Cross-WallpaperEngine
@@ -411,12 +412,6 @@ if(BUILD_TESTING)
         ${COMMON_SOURCES}
 
         src/WallpaperEngine/Testing/Cases/Example.cpp
-        src/WallpaperEngine/Testing/Render/TestingOpenGLDriver.cpp
-        src/WallpaperEngine/Testing/Render/TestingOpenGLDriver.h
-        src/WallpaperEngine/Testing/Input/TestingMouseInput.cpp
-        src/WallpaperEngine/Testing/Input/TestingMouseInput.h
-        src/WallpaperEngine/Testing/Harnesses/RenderHarness.cpp
-        src/WallpaperEngine/Testing/Harnesses/RenderHarness.h
         src/WallpaperEngine/Testing/Cases/MouseCoordinates.cpp)
 endif()
 
@@ -499,24 +494,6 @@ if (BUILD_TESTING)
     target_compile_definitions(tests PRIVATE ERRORONLY=0)
     target_compile_definitions(tests PRIVATE DEMOMODE=0)
 endif()
-
-target_include_directories(linux-wallpaperengine-core PUBLIC
-    include
-    src
-    src/External/glslang-WallpaperEngine
-    src/External/SPIRV-Cross-WallpaperEngine
-    src/External/MimeTypes
-    src/External/json/include
-    src/External/stb
-    src/External/kissfft
-    ${MPV_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIR}
-    ${LZ4_INCLUDE_DIR}
-    ${SDL2_INCLUDE_DIRS}
-    ${FFMPEG_INCLUDE_DIR}
-    ${PULSEAUDIO_INCLUDE_DIR}
-    ${CEF_INCLUDE_PATH}
-    ${CMAKE_SOURCE_DIR})
 
 COPY_FILES(linux-wallpaperengine-core "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${TARGET_OUTPUT_DIRECTORY}")
 COPY_FILES(linux-wallpaperengine-core "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${TARGET_OUTPUT_DIRECTORY}")
